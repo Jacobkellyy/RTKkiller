@@ -129,6 +129,7 @@ fn remove_at_exit(dir: &Path) {
 /// PHP command runs.
 const INHERITED_VARS: [&str; 14] = [
     "CLAUDE_CONFIG_DIR",
+    "USERPROFILE",
     "CODEX_HOME",
     "HERMES_HOME",
     "COPILOT_HOME",
