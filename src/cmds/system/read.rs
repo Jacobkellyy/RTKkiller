@@ -423,13 +423,9 @@ mod tests {
         let fifo = dir.path().join("endless");
         // Shelled out rather than called through libc: `unsafe` is not allowed outside proxy
         // mode's signal handling.
-        assert!(
-            std::process::Command::new("mkfifo")
-                .arg(&fifo)
-                .status()?
-                .success(),
-            "mkfifo failed"
-        );
+        // nosemgrep: raw-std-command -- makes a FIFO for the test, no argument to encode
+        let mkfifo = std::process::Command::new("mkfifo").arg(&fifo).status()?;
+        assert!(mkfifo.success(), "mkfifo failed");
 
         let writer_path = fifo.clone();
         let writer = std::thread::spawn(move || {

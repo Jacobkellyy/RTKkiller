@@ -7,6 +7,7 @@
 
 mod scratch;
 
+use crate::core::child_command::ChildCommand;
 use crate::core::user_dirs;
 use crate::core::user_env;
 use regex::Regex;
@@ -15,6 +16,21 @@ pub use scratch::{isolate_git, isolate_git_config, scratch_dir, temp_git_repo, t
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::LazyLock;
+
+/// [`isolate_git_config`] for a [`ChildCommand`], the git a test build of rtk
+/// spawns itself (see `utils::resolved_command`): the same variables, read back
+/// from a `Command` it isolated.
+pub fn isolate_child_git_config(cmd: &mut ChildCommand) {
+    // nosemgrep: raw-std-command -- never spawned: built only to read back what `isolate_git_config` sets
+    let mut probe = Command::new("git");
+    isolate_git_config(&mut probe);
+    for (name, value) in probe.get_envs() {
+        match value {
+            Some(value) => cmd.env(name, value),
+            None => cmd.env_remove(name),
+        };
+    }
+}
 
 /// This thread's stand-in for the user's directories: the directory a test
 /// gave [`with_root`], or else `home` in the process's scratch directory.

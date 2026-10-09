@@ -125,9 +125,10 @@ fn remove_at_exit(dir: &Path) {
 /// The variables rtk reads that are not its own: the agents' directories,
 /// which lie outside the scratch tree; Gemini's workspace trust, which decides
 /// whether a project's settings are read; the CI indicators the filter-trust
-/// override checks; and Composer's bin directory, which decides which tool a
-/// PHP command runs.
-const INHERITED_VARS: [&str; 14] = [
+/// override checks; Composer's bin directory, which decides which tool a
+/// PHP command runs; and the `MSYSTEM` of an MSYS/Cygwin shell, which decides
+/// whether a child may glob its path operands.
+const INHERITED_VARS: [&str; 15] = [
     "CLAUDE_CONFIG_DIR",
     "CODEX_HOME",
     "HERMES_HOME",
@@ -142,6 +143,7 @@ const INHERITED_VARS: [&str; 14] = [
     "JENKINS_URL",
     "BUILDKITE",
     "COMPOSER_BIN_DIR",
+    "MSYSTEM",
 ];
 
 /// Run git as nothing on the developer's machine configures it: no global or
